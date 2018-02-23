@@ -7,7 +7,7 @@ const bodyParser = require('body-parser');
 const PORT = process.env.PORT || 3000;
 const app = express();
 
-const conString = 'postgres://postgress:password@localhost:5432/lab09';
+const conString = 'postgres://postgres:1234@localhost:5432/articles';
 const client = new pg.Client(conString);
 client.connect();
 client.on('error', error => {
@@ -65,7 +65,7 @@ app.post('/articles', (request, response) => {
 
   function queryThree(author_id) {
     client.query(
-      `INSERT INTO articles(author_id, title, catagory, "publishedOn", body) VALUES ($1, $2, $3, $4, $5)`,
+      `INSERT INTO articles(author_id, title, category, "publishedOn", body) VALUES ($1, $2, $3, $4, $5)`,
       [
         author_id,
         request.body.title,
@@ -83,13 +83,27 @@ app.post('/articles', (request, response) => {
 
 app.put('/articles/:id', function(request, response) {
   client.query(
-    ``,
-    []
+    `UPDATE authors
+     SET author=$1 "authorUrl"=$2
+     WHERE author_id=$3`,
+    [
+    request.body.author,
+    request.body.authorUrl,
+    request.body.author_id
+  ]
   )
     .then(() => {
       client.query(
-        ``,
-        []
+        `UPDATE articles
+        SET author_id=$1 title=$2 category=$3 "publishedOn"=$4 body=$5 WHERE article.id=$6`,
+        [
+          request.body.author_id,
+          request.body.title,
+          request.body.category,
+          request.body.publishedOn,
+          request.body.body,
+          request.params.id
+        ]
       )
     })
     .then(() => {
