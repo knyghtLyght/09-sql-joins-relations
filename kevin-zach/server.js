@@ -7,7 +7,7 @@ const bodyParser = require('body-parser');
 const PORT = process.env.PORT || 3000;
 const app = express();
 
-const conString = 'postgres://postgres:1234@localhost:5432/articles';
+const conString = 'postgres://postgres:password@localhost:5432/lab09';
 const client = new pg.Client(conString);
 client.connect();
 client.on('error', error => {
@@ -26,8 +26,8 @@ app.get('/new', (request, response) => {
 // REVIEW: These are routes for making API calls to enact CRUD operations on our database.
 app.get('/articles', (request, response) => {
   client.query(`
-    SELECT * FROM authors INNER JOIN articles 
-    ON authors.id=articles.author_id;`)
+    SELECT * FROM articles INNER JOIN authors 
+    ON authors.author_id=articles.author_id;`)
     .then(result => {
       response.send(result.rows);
     })
@@ -52,7 +52,7 @@ app.post('/articles', (request, response) => {
 
   function queryTwo() {
     client.query(
-      `SELECT author_id FROM authors WHERE author=$1`,
+      `SELECT author FROM authors WHERE author=$1`,
       [request.body.author],
       function(err, result) {
         if (err) console.error(err);
@@ -87,10 +87,10 @@ app.put('/articles/:id', function(request, response) {
      SET author=$1 "authorUrl"=$2
      WHERE author_id=$3`,
     [
-    request.body.author,
-    request.body.authorUrl,
-    request.body.author_id
-  ]
+      request.body.author,
+      request.body.authorUrl,
+      request.body.author_id
+    ]
   )
     .then(() => {
       client.query(
