@@ -7,7 +7,7 @@ const bodyParser = require('body-parser');
 const PORT = process.env.PORT || 3000;
 const app = express();
 
-const conString = 'postgres://postgres:password@localhost:5432/lab09';
+const conString = 'postgres://postgres:Darkstar1@localhost:5432/lab09';
 const client = new pg.Client(conString);
 client.connect();
 client.on('error', error => {
@@ -38,7 +38,7 @@ app.get('/articles', (request, response) => {
 
 app.post('/articles', (request, response) => {
   client.query(
-    'INSERT INTO authors(author, "authorURL") VALUES($1, $2) ON CONFLICT DO NOTHING',
+    'INSERT INTO authors(author, "authorUrl") VALUES($1, $2) ON CONFLICT DO NOTHING',
     [
       request.body.author,
       request.body.authorUrl
@@ -96,7 +96,7 @@ app.put('/articles/:id', function(request, response) {
       client.query(
         `UPDATE articles
         SET author_id=$1, title=$2, category=$3, "publishedOn"=$4, body=$5
-        WHERE article.id=$6`,
+        WHERE articles.article_id=$6`,
         [
           request.body.author_id,
           request.body.title,
